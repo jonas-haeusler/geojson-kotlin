@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
     `java-library`
-    kotlin("kapt")
+    id("com.vanniktech.maven.publish")
 }
 
 dependencies {

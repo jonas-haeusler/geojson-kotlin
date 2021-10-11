@@ -1,13 +1,13 @@
 plugins {
     kotlin("jvm")
     `java-library`
+    id("com.vanniktech.maven.publish")
 }
 
 dependencies {
     api(project(":geojson"))
     implementation(libs.moshi)
-    implementation(libs.moshiAdapters)
-    testImplementation(libs.jsonAssert)
 
+    testImplementation(libs.jsonAssert)
     testImplementation(libs.kotlinTestJunit)
 }

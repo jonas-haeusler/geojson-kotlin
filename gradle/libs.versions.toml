@@ -2,15 +2,12 @@
 jvmTarget = "1.8"
 kotlin = "1.5.0"
 moshi = "1.12.0"
-moshiSealed = "0.14.1"
 
 [libraries]
 moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
-moshiCodegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
-moshiAdapters = { module = "com.squareup.moshi:moshi-adapters", version.ref = "moshi" }
-moshiSealed = { module = "dev.zacsweers.moshix:moshi-sealed-codegen", version.ref = "moshiSealed" }
-moshiSealedRuntime = { module = "dev.zacsweers.moshix:moshi-sealed-runtime", version.ref = "moshiSealed" }
 
 jsonAssert="org.skyscreamer:jsonassert:1.5.0"
-
 kotlinTestJunit = "org.jetbrains.kotlin:kotlin-test-junit:1.5.31"
+
+[plugins]
+mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.18.0" }
