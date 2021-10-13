@@ -1,14 +1,14 @@
 # GeoJSON for Kotlin
 
-`geojson-kotlin` is a Kotlin implementation of the GeoJSON spec according
-to [RFC 7946](https://tools.ietf.org/html/rfc7946).
+`geojson-kotlin` is a Kotlin implementation of the GeoJSON
+specification ([RFC 7946](https://tools.ietf.org/html/rfc7946)).
 
 # Usage
 
 Add a dependency on `geojson-kotlin` to start using GeoJSON in your project.
 
 ```groovy
-implementation("dev.haeusler.geojson-kotlin:geojson:VERSION")
+implementation("dev.haeusler.geojson-kotlin:geojson:1.0")
 ```
 
 ```kotlin
@@ -43,7 +43,7 @@ val featureCollection: FeatureCollection = FeatureCollection(
 The `geojson-moshi` artifact features a collection of json adapters to serialize/deserialize GeoJSON using Moshi.
 
 ```groovy
-implementation("dev.haeusler.geojson-kotlin:geojson-moshi:VERSION")
+implementation("dev.haeusler.geojson-kotlin:geojson-moshi:1.0")
 ```
 
 To use, supply an instance of `GeoJsonAdapter` when building your Moshi instance.
@@ -56,6 +56,7 @@ val moshiInstance = Moshi.Builder()
 ```
 
 And then serialize or deserialize your objects:
+
 ```kotlin
 val adapter = moshiInstance.adapter(Feature::class.java)
 
@@ -64,14 +65,16 @@ val feature = Feature(
     properties = mapOf("prop0" to "value0")
 )
 
-val featureJson = adapter.toJson(feature)
+val featureJson: String = adapter.toJson(feature)
 
 val featureFromJson: Feature? = adapter.fromJson(featureJson)
 ```
 
 Alternatively, you can also use the convenience extension functions to convert to JSON and back:
+
 ```kotlin
 val featureJson = feature.toJson(indent = "  ", moshi = moshiInstance)
 val featureFromJson = featureJson.toGeoJson(moshi = moshiInstance)
 ```
+
 If you do not supply your own moshi instance, a new one will be created for you.
