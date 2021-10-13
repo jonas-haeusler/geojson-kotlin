@@ -60,8 +60,10 @@ internal class FeatureJsonAdapter(moshi: Moshi) : JsonAdapter<Feature>() {
         }
 
         writer.beginObject()
-        writer.name("geometry")
-        geometryObjectAdapter.toJson(writer, value.geometry)
+        if (value.geometry != null) {
+            writer.name("geometry")
+            geometryObjectAdapter.toJson(writer, value.geometry)
+        }
         writer.name("properties")
         mapObjectAdapter.toJson(writer, value.properties)
         writer.name("id")
