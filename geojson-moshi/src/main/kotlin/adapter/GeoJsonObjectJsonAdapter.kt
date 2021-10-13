@@ -1,7 +1,16 @@
 package adapter
 
+import Feature
+import FeatureCollection
 import GeoJson
 import GeoJsonType
+import GeometryCollection
+import LineString
+import MultiLineString
+import MultiPoint
+import MultiPolygon
+import Point
+import Polygon
 import com.squareup.moshi.*
 import com.squareup.moshi.internal.Util
 
@@ -9,45 +18,39 @@ internal class GeoJsonObjectJsonAdapter(val moshi: Moshi) : JsonAdapter<GeoJson>
 
     private val labelKey: String = "type"
     private val labelOption: JsonReader.Options = JsonReader.Options.of(labelKey)
+    
+    private val featureCollectionJsonAdapter = moshi.adapter(FeatureCollection::class.java)
+    private val pointJsonAdapter = moshi.adapter(Point::class.java)
+    private val multiPointJsonAdapter = moshi.adapter(MultiPoint::class.java)
+    private val lineStringJsonAdapter = moshi.adapter(LineString::class.java)
+    private val multiLineStringJsonAdapter = moshi.adapter(MultiLineString::class.java)
+    private val polygonJsonAdapter = moshi.adapter(Polygon::class.java)
+    private val multiPolygonJsonAdapter = moshi.adapter(MultiPolygon::class.java)
+    private val geometryCollectionJsonAdapter = moshi.adapter(GeometryCollection::class.java)
+    private val featureJsonAdapter = moshi.adapter(Feature::class.java)
 
-    private val adapters: List<JsonAdapter<out GeoJson>> = listOf(
-        FeatureCollectionJsonAdapter(moshi),
-        PointJsonAdapter(moshi),
-        MultiPointJsonAdapter(moshi),
-        LineStringJsonAdapter(moshi),
-        MultiLineStringJsonAdapter(moshi),
-        PolygonJsonAdapter(moshi),
-        MultiPolygonJsonAdapter(moshi),
-        GeometryCollectionJsonAdapter(moshi),
-        FeatureJsonAdapter(moshi),
-    )
-
-    private val types = listOf(
-        GeoJsonType.FeatureCollection.name,
-        GeoJsonType.Point.name,
-        GeoJsonType.MultiPoint.name,
-        GeoJsonType.LineString.name,
-        GeoJsonType.MultiLineString.name,
-        GeoJsonType.Polygon.name,
-        GeoJsonType.MultiPolygon.name,
-        GeoJsonType.GeometryCollection.name,
-        GeoJsonType.Feature.name,
-    )
-
-    private val subtypes = JsonReader.Options.of(*types.toTypedArray())
+    private val subtypes = JsonReader.Options.of(*GeoJsonType.values().map { it.name }.toTypedArray())
 
     override fun fromJson(reader: JsonReader): GeoJson? {
-        val peeked = reader.peekJson()
-        peeked.setFailOnUnknown(false)
-
-        val index = peeked.use { peekedd ->
-            selectTypeIndex(peekedd)
+        val type = reader.peekJson().use { peeked ->
+            peeked.setFailOnUnknown(false)
+            selectTypeIndex(peeked)
         }
 
-        return adapters[index].fromJson(reader)
+        return when (type) {
+            GeoJsonType.Point -> pointJsonAdapter.fromJson(reader)
+            GeoJsonType.MultiPoint -> multiPointJsonAdapter.fromJson(reader)
+            GeoJsonType.LineString -> lineStringJsonAdapter.fromJson(reader)
+            GeoJsonType.MultiLineString -> multiLineStringJsonAdapter.fromJson(reader)
+            GeoJsonType.Polygon -> polygonJsonAdapter.fromJson(reader)
+            GeoJsonType.MultiPolygon -> multiPolygonJsonAdapter.fromJson(reader)
+            GeoJsonType.GeometryCollection -> geometryCollectionJsonAdapter.fromJson(reader)
+            GeoJsonType.Feature -> featureJsonAdapter.fromJson(reader)
+            GeoJsonType.FeatureCollection -> featureCollectionJsonAdapter.fromJson(reader)
+        }
     }
 
-    private fun selectTypeIndex(reader: JsonReader): Int {
+    private fun selectTypeIndex(reader: JsonReader): GeoJsonType {
         reader.beginObject()
         while (reader.hasNext()) {
             if (reader.selectName(labelOption) == -1) {
@@ -56,24 +59,33 @@ internal class GeoJsonObjectJsonAdapter(val moshi: Moshi) : JsonAdapter<GeoJson>
                 continue
             }
 
-            val type = reader.selectString(subtypes)
-            if (type == -1) {
+            val typeIndex = reader.selectString(subtypes)
+            if (typeIndex == -1) {
                 throw JsonDataException("Expected one of $subtypes for key '$labelKey' but found ${reader.nextString()}")
             }
-            return type
+            return GeoJsonType.valueOf(subtypes.strings()[typeIndex])
         }
         throw Util.missingProperty("type", "type", reader)
     }
 
     override fun toJson(writer: JsonWriter, value: GeoJson?) {
-        val type = value?.type?.name
-        val adapter = adapters.getOrElse(types.indexOf(type)) {
-            throw IllegalArgumentException("Expected one of $subtypes but found $type, a ${type?.javaClass?.name}")
-        } as JsonAdapter<in GeoJson>
+        if (value == null) {
+            throw NullPointerException("value was null! Wrap in .nullSafe() to write nullable values.")
+        }
 
         writer.beginObject()
         val flattenToken = writer.beginFlatten()
-        adapter.toJson(writer, value)
+        when (value) {
+            is Point -> pointJsonAdapter.toJson(writer, value)
+            is MultiPoint -> multiPointJsonAdapter.toJson(writer, value)
+            is LineString -> lineStringJsonAdapter.toJson(writer, value)
+            is MultiLineString -> multiLineStringJsonAdapter.toJson(writer, value)
+            is Polygon -> polygonJsonAdapter.toJson(writer, value)
+            is MultiPolygon -> multiPolygonJsonAdapter.toJson(writer, value)
+            is GeometryCollection -> geometryCollectionJsonAdapter.toJson(writer, value)
+            is Feature -> featureJsonAdapter.toJson(writer, value)
+            is FeatureCollection -> featureCollectionJsonAdapter.toJson(writer, value)
+        }
         writer.endFlatten(flattenToken)
         writer.endObject()
     }
