@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     api(project(":geojson"))
-    implementation(libs.moshi)
+    api(libs.moshi)
 
     testImplementation(libs.jsonAssert)
     testImplementation(libs.kotlinTestJunit)
