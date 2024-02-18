@@ -1,13 +1,12 @@
 [versions]
-jvmTarget = "1.8"
-kotlin = "1.5.0"
-moshi = "1.12.0"
+kotlin = '1.9.22'
+moshi = '1.15.1'
 
 [libraries]
-moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
+moshi = { module = 'com.squareup.moshi:moshi', version.ref = 'moshi' }
 
-jsonAssert="org.skyscreamer:jsonassert:1.5.0"
-kotlinTestJunit = "org.jetbrains.kotlin:kotlin-test-junit:1.5.31"
+jsonAssert = 'org.skyscreamer:jsonassert:1.5.1'
+kotlinTestJunit = { module = 'org.jetbrains.kotlin:kotlin-test-junit', version.ref = 'kotlin' }
 
 [plugins]
-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.18.0" }
+mavenPublish = { id = 'com.vanniktech.maven.publish', version = '0.27.0' }

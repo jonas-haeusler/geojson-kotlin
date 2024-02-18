@@ -1,5 +1,7 @@
-buildscript {
+import com.vanniktech.maven.publish.MavenPublishBaseExtension
+import com.vanniktech.maven.publish.SonatypeHost
 
+buildscript {
     repositories {
         mavenCentral()
     }
@@ -17,9 +19,10 @@ allprojects {
         mavenCentral()
     }
 
-    plugins.withId("com.vanniktech.maven.publish") {
-        mavenPublish {
-            sonatypeHost = com.vanniktech.maven.publish.SonatypeHost.S01
+    plugins.withId("com.vanniktech.maven.publish.base") {
+        configure<MavenPublishBaseExtension> {
+            publishToMavenCentral(SonatypeHost.S01)
+            signAllPublications()
         }
     }
 }
