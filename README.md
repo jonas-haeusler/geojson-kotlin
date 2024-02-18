@@ -8,7 +8,7 @@ specification ([RFC 7946](https://tools.ietf.org/html/rfc7946)).
 Add a dependency on `geojson-kotlin` to start using GeoJSON in your project.
 
 ```groovy
-implementation("dev.haeusler.geojson-kotlin:geojson:1.0")
+implementation("dev.haeusler.geojson-kotlin:geojson:1.1")
 ```
 
 ```kotlin
@@ -43,7 +43,7 @@ val featureCollection: FeatureCollection = FeatureCollection(
 The `geojson-moshi` artifact features a collection of json adapters to serialize/deserialize GeoJSON using Moshi.
 
 ```groovy
-implementation("dev.haeusler.geojson-kotlin:geojson-moshi:1.0")
+implementation("dev.haeusler.geojson-kotlin:geojson-moshi:1.1")
 ```
 
 To use, supply an instance of `GeoJsonAdapter` when building your Moshi instance.
